@@ -1,0 +1,207 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>NewsFeed</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/animate.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/font.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/li-scroller.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/slick.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.fancybox.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/theme.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+<link rel="stylesheet" href="{% static 'uikit/styles/uikit.css' %}" />
+
+<link rel="stylesheet" href="{% static 'styles/app.css' %}" />
+
+</head>
+<body>
+<div id="preloader">
+  <div id="status">&nbsp;</div>
+</div>
+<a class="scrollToTop" href="#"><i class="fa fa-angle-up"></i></a>
+<div class="container">
+  <header id="header">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="header_top">
+          <div class="header_top_left">
+            <ul class="top_nav">
+              <li><a href="{% url 'post' %}">{% trans "Bosh sahifa" %}</a></li>
+              <li><a href="#">{% trans "Maqolalar" %}</a></li>
+              <li><a href="pages/contact.html">{% trans "Aloqa" %}</a></li>
+            </ul>
+
+          </div>
+          <div class="header_top_right">
+          <ul>
+            <li>
+                <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                  <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language">
+                      {% get_current_language as LANGUAGE_CODE %}
+                      {% get_available_languages as LANGUAGES %}
+                      {% get_language_info_list for LANGUAGES as languages %}
+                      {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                        {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                    </select>
+                  <input class="btn-there" type="submit" value="Go">
+                </form>
+            </li>
+            <li>
+              
+                {% if user.is_authenticated %}
+                <p><a style="color: yellow;" href="{% url 'user_logout' %}">{% trans "Hisobdan chiqish" %}</a></p>
+                <!-- <h4><a style="color: yellow;" href="{% url 'user_login' %}">SignIn</a></h4> -->
+                {% else %}
+                <p><a style="color: yellow;" href="{% url 'user_login' %}">{% trans "Hisobga kirish" %}</a></p>
+                {% endif %}
+              
+            </li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="header_bottom">
+          <div class="logo_area"><a href="{% url 'post' %}" class="logo"><img src="{% static 'images/logo.jpg' %}" alt=""></a></div>
+          <div class="add_banner"><a href="#"><img src="{% static 'images/addbanner_728x90_V1.jpg' %}" alt=""></a></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <section id="navArea">
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav main_nav">
+          <li class="active"><a href="{% url 'post' %}"><span class="fa fa-home desktop-home"></span><span class="mobile-show">Home</span></a></li>
+          <li class=""> <a href="/category_post/Web%20dasturlsh/?page=1">{% trans "Web dasturlash" %}</a></li>
+          <li><a href="/category_post/Mobil%20dasturlash/?page=1">{% trans "Mobil dasturlash" %}</a></li>
+          <li><a href="/category_post/Dasturlash%20asoslri/?page=1">{% trans "Dasturlash asoslari" %}</a></li>
+          <li><a href="/category_post/Tehnologiyalar%20haqida/?page=1">{% trans "Tehnologiyalar haqida" %}</a></li>
+        </ul>
+      </div>
+    </nav>
+  </section>
+  <section id="newsSection">
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="latest_newsarea"> <span>{% trans "Eng so`ngi Maqolalar" %}</span>
+          <ul id="ticker01" class="news_sticker">
+            {% for post in new_posts %}
+
+            <li><a href="{% url 'post_get' post.id %}"><img src="{{ post.img.url }}" alt="">{{ post.title|slice:40 }}...</a></li>
+
+            {% endfor %}
+          </ul>
+          <div class="social_area">
+            <ul class="social_nav">
+              <li class="facebook"><a href="#"></a></li>
+              <li class="twitter"><a href="#"></a></li>
+              <li class="flickr"><a href="#"></a></li>
+              <li class="pinterest"><a href="#"></a></li>
+              <li class="googleplus"><a href="#"></a></li>
+              <li class="vimeo"><a href="#"></a></li>
+              <li class="youtube"><a href="#"></a></li>
+              <li class="mail"><a href="#"></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!------------------------------------------------------------------------------------------->
+{% if form %}
+<br><br>
+<div class="container" style="background-color: rgb(168, 206, 206);">
+    <form action="{% url 'post_edit' post.id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+      <br><br><br><br>
+        {{form.media}}
+        {{ form.as_p }}
+        <input style="width: 140px; height: 40px;" class="btn-theme" type="submit" value="Saqlash">
+        <a class="btn-red" style="padding: 7px;" href="{% url 'post_delete' post.id %}">Postni o`chirish</a>
+        <br><br><br>
+    </form>
+</div>
+  
+{% else %}
+<br><br>
+<div class="container" style="background-color: rgb(168, 206, 206);">
+  <form action="{% url 'post_create' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <br><br><br><br><br>
+      {{form.media}}
+      {{ form_create.as_p }}
+      <input style="width: 140px; height: 40px;" class="btn-theme" type="submit" value="Saqlash">
+      <br><br><br>
+  </form>
+</div>
+
+{% endif %}
+
+
+<!--------------------------------------------------------------------------------------------->
+
+<footer id="footer">
+    <div class="footer_top">
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="footer_widget wow fadeInLeftBig">
+            <h2>Flickr Images</h2>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="footer_widget wow fadeInDown">
+            <h2>Tag</h2>
+            <ul class="tag_nav">
+              <li><a href="#">Games</a></li>
+              <li><a href="#">Sports</a></li>
+              <li><a href="#">Fashion</a></li>
+              <li><a href="#">Business</a></li>
+              <li><a href="#">Life &amp; Style</a></li>
+              <li><a href="#">Technology</a></li>
+              <li><a href="#">Photo</a></li>
+              <li><a href="#">Slider</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="footer_widget wow fadeInRightBig">
+            <h2>Contact</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+            <address>
+            Perfect News,1238 S . 123 St.Suite 25 Town City 3333,USA Phone: 123-326-789 Fax: 123-546-567
+            </address>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer_bottom">
+      <p class="copyright">Copyright &copy; 2045 <a href="index.html">NewsFeed</a></p>
+      <p class="developer">Developed By Wpfreeware</p>
+    </div>
+  </footer>
+</div>
+<script src="{% static 'assets/js/jquery.min.js' %}"></script> 
+<script src="{% static 'assets/js/wow.min.js' %}"></script> 
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script> 
+<script src="{% static 'assets/js/slick.min.js' %}"></script> 
+<script src="{% static 'assets/js/jquery.li-scroller.1.0.js' %}"></script> 
+<script src="{% static 'assets/js/jquery.newsTicker.min.js' %}"></script> 
+<script src="{% static 'assets/js/jquery.fancybox.pack.js' %}"></script> 
+<script src="{% static 'assets/js/custom.js' %}"></script>
+</body>
+</html>

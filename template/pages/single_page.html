@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load social_share %}
+{% load i18n %}
+
+{% block content %}
+  
+  <section id="contentSection">
+    <div class="row">
+      <div class="col-lg-8 col-md-8 col-sm-8">
+
+        <div class="sliderSection">
+          <div class="contentSection">
+            <ol class="breadcrumb">
+              <li><a href="{% url 'post' %}">{% trans "Bosh sahifa" %}</a></li>
+              <li><a href="#">{{ post.category }}</a></li>
+            </ol>
+            <div class="post_commentbox"> <a href="#"><i class="fa fa-user"></i>{{ post.author }}</a> <span><i class="fa fa-calendar"></i>{{ post.date }}</span> <a href="#"><i class="fa fa-tags"></i>{{ post.category }}</a><a><i class="fa fa-comments">   {{ comment.count }} comments</a></i> </div>
+            <div class="single_iteam"> <img class="Photography Ttile 2" src="{{ post.img.url }}" alt=""><br>
+            
+              <blockquote> {{ post.title }}</blockquote>
+              <p>{{ post.text | safe }}</p><hr>
+              {% if user.username == post.author.username %}
+              <a style="padding: 10px;" class="btn-theme" href="{% url 'post_edit' post.id %}">{% trans "Postni tahrirlash" %}</a>
+              {% endif %}
+              <hr>
+              <form action="{% url 'post_get' post.id %}" method="GET">
+                {% if user.is_authenticated %}
+                <button style="padding: 10px;" type="submit" name="like" class="btn-red">Like: {{ post.like.count }}</button>
+                {% else %}
+                <button style="padding: 10px;" type="submit" name="no-like" class="btn-red">Like: {{ post.like.count }}</button>
+                {% endif %}
+              </form>
+              <a style="padding: 10px;" class="btn-green" >Read: {{ hits }}</a>
+              <div class="container"><br>
+                
+                <form action="" method="post">{% csrf_token %}
+                  {% if user.is_authenticated %}
+                  <h4 style="color: rgb(27, 117, 117);">{% trans "Maqola haqida fikrlaringizni qoldiring !" %}</p>
+                  <input class="form-control" style="width: 30%;" name="text" type="text" placeholder="Comment---"><br>
+                  
+                  <input class="btn-theme" type="submit" value="Comment"><hr>
+                  
+                </form>
+                  {% else %}
+                    <h4>{% trans "Comment yozish uchun avval tizimga kiring !" %}</h4>
+                    
+                    <a style="padding: 5px;" href="{% url 'user_login' %}" class="btn-theme">Login/Register</a>
+                  {% endif %}
+              </div>
+              <div class="comments">
+                {% for c in comment %}
+                <ul style="border-bottom: 2px solid rgb(0, 0, 0); padding: 5px;">
+                  <li><p style="color: rgb(255, 115, 0);">{{ c.user }} </p></li>
+                  <li><p>---  {{ c.text }}</p></li>
+                  <li><sub>{{ c.date }}</sub></li>
+                </ul>
+                {% endfor %}
+              </div>
+              <div style="margin: 20px;" class="social_link">
+                <ul class="sociallink_nav">
+                  <li><h4>{% trans "Ulashish" %} :  <h2></li>
+                  <li class="btn-theme">{% post_to_facebook 'TexnoBlog : {{ post.title }}' object_or_url 'Facebook' %}</li>
+                  <li class="btn-theme">{% post_to_twitter 'TexnoBlog : {{ post.title }}' object_or_url 'Twitter' %}</li>
+                  <li class="btn-theme">{% post_to_telegram 'TexnoBlog : {{ post.title }}' object_or_url 'Telegram' %}</li>
+                  
+                </ul>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-4 col-md-4 col-sm-4">
+        <aside class="right_content">
+          <div class="single_sidebar">
+            <h2><span>{% trans "Kategorya postlar" %}</span></h2>
+            <ul class="spost_nav">
+              
+              {% for post in last_it %}
+              <li>
+                <div class="media"> <a class="media-left" href="{% url 'post_get' post.id %}"> <img src="{{ post.img.url }}" alt=""> </a>
+                  <div class="media-body"> <a class="catg_title" href="{% url 'post_get' post.id %}">{{ post.title|slice:100 }}...</a> </div>
+                </div>
+              </li>
+              {% endfor %}
+              
+            </ul>
+          </div>
+          <div class="single_sidebar">
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#category" aria-controls="home" role="tab" data-toggle="tab">Category</a></li>
+              <li role="presentation"><a href="#video" aria-controls="profile" role="tab" data-toggle="tab">Video</a></li>
+              <li role="presentation"><a href="#comments" aria-controls="messages" role="tab" data-toggle="tab">Comments</a></li>
+            </ul>
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="category">
+                <ul>
+                  {% for i in category %}
+                                      
+                  <li class="cat-item"><a href="#">{{ i.name }}</a></li>
+
+                  {% endfor %}
+                </ul>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="video">
+                <div class="vide_area">
+                  <iframe width="100%" height="250" src="http://www.youtube.com/embed/h5QWbURNEpA?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="comments">
+                <ul class="spost_nav">
+                  <li>
+                    <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
+                      <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 1</a> </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
+                      <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 2</a> </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
+                      <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 3</a> </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
+                      <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 4</a> </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="single_sidebar wow fadeInDown">
+            <h2><span>Sponsor</span></h2>
+            <a class="sideAdd" href="#"><img src="https://лунник.рф/uploads/images/album/tb/galaktika3.jpg" alt=""></a> </div>
+          <div class="single_sidebar wow fadeInDown">
+            <h2><span>Category Archive</span></h2>
+            <select class="catgArchive">
+              <option>Select Category</option>
+              <option>Life styles</option>
+              <option>Sports</option>
+              <option>Technology</option>
+              <option>Treads</option>
+            </select>
+          </div>
+          <div class="single_sidebar wow fadeInDown">
+            <h2><span>Links</span></h2>
+            <ul>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Rss Feed</a></li>
+              <li><a href="#">Login</a></li>
+              <li><a href="#">Life &amp; Style</a></li>
+            </ul>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+
+  </section>
+
+  {% endblock content %}
+  <!-- <li><a href="{% post_to_telegram 'TexnoBlog : {{ post.title }}' object_or_url 'T/G' %}"><i class="fa fa-telegram"></i></a></li> -->
+  
